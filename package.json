@@ -1,0 +1,27 @@
+{
+  "name": "canada_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DodgeWang/canada_App_Server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.3",
+    "express-session": "^1.15.3",
+    "formidable": "^1.1.1",
+    "mysql": "^2.13.0"
+  },
+  "bugs": {
+    "url": "https://github.com/DodgeWang/canada_App_Server/issues"
+  },
+  "homepage": "https://github.com/DodgeWang/canada_App_Server#readme"
+}
