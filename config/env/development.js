@@ -9,7 +9,7 @@ module.exports = {
         host: '127.0.0.1', //数据库地址
         port: 3306, //数据库端口号
         user: 'root', //数据库用户名
-        password: '123456', //密码
+        password: '000000', //密码
         database: 'canada' //数据库名
     }
 }
