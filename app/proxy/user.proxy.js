@@ -2,20 +2,18 @@ var mysql = require('../../config/mysql');
 var encryption = require("../func/encryption");
 
 
+
 /**
- * 查询用户列表
- * @param  {number}   page   查询页数     
- * @param  {number}   size   查询条数     
+ * 根据用户名查询用户信息  
+ * @param  {String} username 回调函数  
  * @param  {Function} callback 回调函数
  * @return {null}
  */
-exports.getList = function(page,size,callback) {
-   var limit_Start = (page - 1) * size; 
+exports.login = function(username,callback) {
    mysql.query({
-        sql: "SELECT id,username FROM tbl_user order by id desc limit :limit_Start,:size",
+        sql: "SELECT * FROM tbl_user WHERE username=:username",
         params  : {
-           "limit_Start": limit_Start,
-           "size": size
+           "username": username
         }
     }, function(err, rows) {
         if (err) {
@@ -23,23 +21,25 @@ exports.getList = function(page,size,callback) {
         }
 
         if (rows && rows.length > 0) {
-            callback(null, rows);
+            callback(null, rows[0]);
         } else {
-            callback(null, []);
+            callback(null, null);
         }
     })
 }
 
 
 
+
 /**
  * 重置用户密码
- * @param  {number}   userId   用户ID     
+ * @param  {number}   userId   用户ID
+ * @param  {String}   newpass   用户新密码        
  * @param  {Function} callback 回调函数
  * @return {null}
  */
-exports.resetPassword = function(userId,callback) {
-   var newPass = encryption.md5('123456',32);
+exports.resetPassword = function(userId,newpass,callback) {
+   var newPass = encryption.md5(newpass,32);
    // var sqls = "UPDATE tbl_user SET password='" + newPass + "' WHERE id=" + userId;
    mysql.query({
         sql: "UPDATE tbl_user SET password = :newPass WHERE id = :userId",

@@ -8,7 +8,7 @@ module.exports = {
         	code:1,
         	msg:'没有找到相关数据'
         }, //means data not found not url request
-        STATUS_SERVER_ERROR: {
+        SERVER_ERROR: {
         	code:2,
         	msg:'服务器错误'
         },
