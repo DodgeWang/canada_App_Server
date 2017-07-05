@@ -26,7 +26,7 @@ module.exports = {
         },
         SESSION_ERROR: {
             code:5,
-            msg:'登陆过期， 请重新登陆'
+            msg:'登陆过期，请重新登陆'
         },
     },
     AdminStatus: {
