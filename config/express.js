@@ -4,6 +4,8 @@ var bodyParser = require('body-parser');
 var mysql = require('./mysql.js');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
+var config = require('./env/statusConfig');
+var resUtil  = require("./../app/libs/resUtil");
 
 module.exports = function() {
     console.log('int express...');
@@ -22,13 +24,13 @@ module.exports = function() {
 
 
     app.use(function(req, res, next) {
-        // if(req.url == '/admin/login' || req.url == '/login' || req.url == '/admin/exit') return next();
-        // if(!req.session.administrator){
-        //    res.redirect('/login')
-        // }else{
-        //    next();
-        // }
-        next()
+        if(req.url == '/api/login' || req.url == '/admin/exit') return next();
+        if(!req.session.userInfo){
+           res.json(resUtil.generateRes(null, config.statusCode.SESSION_ERROR));
+           console.log(resUtil.generateRes(null, config.statusCode.SESSION_ERROR));
+        }else{
+           next();
+        }
     })
 
     routers(app);

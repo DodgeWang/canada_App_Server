@@ -28,7 +28,12 @@ exports.login = function(req, res, next) {
         if(password == rows.password){
             //登陆账号密码都正确
             req.session.userInfo = rows;
-            res.json(resUtil.generateRes(rows, config.AdminStatus.SUCCESS));
+            var data = {
+                id:rows.id,
+                username:rows.username,
+                studentId:rows.studentId
+            }
+            res.json(resUtil.generateRes(data, config.AdminStatus.SUCCESS));
         }else{
             //登陆密码错误
             res.json(resUtil.generateRes(null, config.AdminStatus.PASSWORD_ERROR));

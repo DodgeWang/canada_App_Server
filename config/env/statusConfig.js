@@ -24,6 +24,10 @@ module.exports = {
             code:-1,
             msg:'旧密码不正确，修改失败'
         },
+        SESSION_ERROR: {
+            code:5,
+            msg:'登陆过期， 请重新登陆'
+        },
     },
     AdminStatus: {
        SUCCESS: {
@@ -32,7 +36,7 @@ module.exports = {
        },
        USER_ERROR: {
            code:1001,
-           msg: '登陆用户不存在'
+           msg: '用户不存在'
        },
        PASSWORD_ERROR: {
            code:1002,

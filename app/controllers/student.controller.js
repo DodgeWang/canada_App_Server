@@ -91,16 +91,15 @@ exports.getInfo = function(req, res, next) {
         }
         var data = [];
         if (obj !== null) {
-            console.log(obj)
             for(var i = 0; i < obj.length; i++){
                var lesObj = {};
-               lesObj.p= obj[i].p;
+               lesObj.pNum= obj[i].p;
                lesObj.pName = obj[i][obj[i].p+'_name'];
                lesObj.pCode = obj[i][obj[i].p];
-               lesObj.absence = obj[i].absence;
-               lesObj.late = obj[i].late;
-               lesObj.startDate = obj[i].start_date;
-               lesObj.endDate = obj[i].end_date;
+               lesObj.absence = obj[i][obj[i].p+'_absence'];
+               lesObj.late = obj[i][obj[i].p+'_late'];
+               lesObj.startDate = dateStr(obj[i].start_date);
+               lesObj.endDate = dateStr(obj[i].end_date);
                lesObj.startTime = obj[i].start_time;
                lesObj.endTime = obj[i].end_time;
                lesObj.weekly = obj[i].weekly;
@@ -115,7 +114,7 @@ exports.getInfo = function(req, res, next) {
 
 
  /**
- * 通过学生Id和课程编号查询学生的课程列表
+ * 通过学生Id和课程编号查询学生的课程详情
  * @param  {object}   req  the request object
  * @param  {object}   res  the response object
  * @param  {Function} next the next func
@@ -128,25 +127,36 @@ exports.getInfo = function(req, res, next) {
         if (err) {
             return res.json(resUtil.generateRes(null, config.statusCode.SERVER_ERROR));
         }
-        var data = [];
+        var data = {};
         if (obj !== null) {
-               var lesObj = {};
-               lesObj.pNum= obj.p;
-               lesObj.pName = obj[obj.p+'_name'];
-               lesObj.pCode = obj[obj.p];
-               lesObj.absence = obj.absence;
-               lesObj.late = obj.late;
-               lesObj.startDate = obj.start_date;
-               lesObj.endDate = obj.end_date;
-               lesObj.startTime = obj.start_time;
-               lesObj.endTime = obj.end_time;
-               lesObj.weekly = obj.weekly;
-               data.push(lesObj)  
+               data.pNum= obj.p;
+               data.pName = obj[obj.p+'_name'];
+               data.pCode = obj[obj.p];
+               data.absence = obj[obj.p+'_absence'];
+               data.late = obj[obj.p+'_late'];
+               data.startDate = dateStr(obj.start_date);
+               data.endDate = dateStr(obj.end_date);
+               data.startTime = obj.start_time;
+               data.endTime = obj.end_time;
+               data.weekly = obj.weekly; 
         }
         res.json(resUtil.generateRes(data, config.statusCode.STATUS_OK));
     })
 
  }
+
+
+/**
+ * 时间转换为固定类型
+ * @param  {object}   date  日期
+ * @return {null}        
+ */
+function dateStr(date){
+    var year = date.getFullYear();
+    var month = (date.getMonth()+1) < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1;
+    var date = date.getDate() < 10 ? '0'+date.getDate() : date.getDate();
+    return year+'/'+month+'/'+date;
+}
 
 
 
