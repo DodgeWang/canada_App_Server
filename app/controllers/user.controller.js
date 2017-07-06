@@ -43,6 +43,19 @@ exports.login = function(req, res, next) {
 }
 
 /**
+ * 退出登录
+ * @param  {object}   req  the request object
+ * @param  {object}   res  the response object
+ * @param  {Function} next the next func
+ * @return {null}        
+ */
+exports.logOut = function(req, res, next) {
+    delete req.session.userInfo;
+    console.log('hahah')
+    res.json(resUtil.generateRes(null, config.statusCode.STATUS_OK));
+}
+
+/**
  * 修改用户密码
  * @param  {object}   req  the request object
  * @param  {object}   res  the response object

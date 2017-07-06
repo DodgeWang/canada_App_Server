@@ -24,7 +24,7 @@ module.exports = function() {
 
 
     app.use(function(req, res, next) {
-        if(req.url == '/api/login' || req.url == '/admin/exit') return next();
+        if(req.url == '/api/login' || req.url == '/api/logOut') return next();
         if(!req.session.userInfo){
            res.json(resUtil.generateRes(null, config.statusCode.SESSION_ERROR));
            console.log(resUtil.generateRes(null, config.statusCode.SESSION_ERROR));
