@@ -51,7 +51,6 @@ exports.login = function(req, res, next) {
  */
 exports.logOut = function(req, res, next) {
     delete req.session.userInfo;
-    console.log('hahah')
     res.json(resUtil.generateRes(null, config.statusCode.STATUS_OK));
 }
 
