@@ -31,7 +31,7 @@ exports.classify = function(callback) {
  */
 exports.ListById = function(id,callback) {
    mysql.query({
-        sql: "SELECT * FROM tbl_campusactivities WHERE classifyId = :id order by id desc",
+        sql: "SELECT * FROM tbl_campusactivities WHERE classifyId = :id order by id desc limit 4",
         params  : {
         	"id":id
         }
