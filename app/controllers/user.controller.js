@@ -31,7 +31,7 @@ exports.login = function(req, res, next) {
             var data = {
                 id:rows.id,
                 username:rows.username,
-                studentId:rows.studentId
+                studentNum:rows.studentNum
             }
             res.json(resUtil.generateRes(data, config.AdminStatus.SUCCESS));
         }else{
