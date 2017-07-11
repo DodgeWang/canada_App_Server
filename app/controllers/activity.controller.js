@@ -30,7 +30,7 @@ exports.homeActivity = function(req, res, next) {
                    item.list = rows;
                    data.push(item);
                    if(i === obj.length-1){
-                     	console.log(data)
+                     	// console.log(data)
                      	res.json(resUtil.generateRes(data, config.statusCode.STATUS_OK));
                    }   
                 })     

@@ -7,7 +7,7 @@ var mysql = require('../../config/mysql');
  */
 exports.classify = function(callback) {
    mysql.query({
-        sql: "SELECT * FROM tbl_indexclassification",
+        sql: "SELECT * FROM tbl_indexclassification WHERE homeshow = 1",
         params  : {}
     }, function(err, rows) {
         if (err) {
