@@ -11,31 +11,35 @@ var config = require('../../config/env/statusConfig');
  */
 exports.homeActivity = function(req, res, next) {
     activity.classify(function(err, obj) {
-        if(err){
+        if (err) {
             return res.json(resUtil.generateRes(null, config.statusCode.SERVER_ERROR));
         }
-        if(obj === null){
-        	return res.json(resUtil.generateRes(null, config.statusCode.STATUS_OK));
+        if (obj === null) {
+            return res.json(resUtil.generateRes(null, config.statusCode.STATUS_OK));
         }
-        
+
         var data = []
-        for(var i = 0; i <obj.length; i++){
-        	(function(o,data,i){
-                var item = {};
-                item.name = o.name;
-                activity.ListById(obj[i].id, function(err,rows){ 
-                   if(err){
-                     return res.json(resUtil.generateRes(null, config.statusCode.SERVER_ERROR));
-                   }  	
-                   item.list = rows;
-                   data.push(item);
-                   if(i === obj.length-1){
-                     	// console.log(data)
-                     	res.json(resUtil.generateRes(data, config.statusCode.STATUS_OK));
-                   }   
-                })     
-        	})(obj[i],data,i)
-        }     
+        
+        getActivity(0,obj,data,res)
     })
 
+}
+
+
+function getActivity(i,obj,data,res) {  
+    var item = {};
+    item.name = obj[i].name;
+    activity.ListById(obj[i].id, function(err, rows) {
+        if (err) {
+            return res.json(resUtil.generateRes(null, config.statusCode.SERVER_ERROR));
+        }
+        item.list = rows;
+        data.push(item);
+        if (i === obj.length - 1) {
+            return res.json(resUtil.generateRes(data, config.statusCode.STATUS_OK));
+        }else{
+            i+=1;
+            return getActivity(i,obj,data,res)
+        }
+    })
 }
