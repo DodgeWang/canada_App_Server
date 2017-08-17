@@ -83,3 +83,26 @@ exports.lessonInfo = function(stuNum,pNum,callback) {
         }
     })
 }
+
+
+/**
+ * 获取课程和对应课程名        
+ * @param  {Function} callback 回调函数
+ * @return {null}
+ */
+exports.lessonName = function(callback) {
+   mysql.query({
+        sql: "SELECT * FROM tbl_lessonName order by id desc",
+        params  : {}
+    }, function(err, rows) {
+        if (err) {
+            callback(err, null);
+        }
+
+        if (rows && rows.length > 0) {
+            callback(null, rows);
+        } else {
+            callback(null, null);
+        }
+    })
+}
