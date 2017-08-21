@@ -194,7 +194,7 @@ function dateStr(date) {
 function pname(pCode, list) {
     if (list === null) return '';
     for (var i = 0; i < list.length; i++) {
-        if (pCode === list[i].code) return list[i].name;
+        if (pCode.slice(0,5) === list[i].code) return list[i].name;
     }
     return '';
 }
