@@ -17,7 +17,6 @@ exports.getInfo = function(req, res, next) {
             return res.json(resUtil.generateRes(null, config.statusCode.SERVER_ERROR));
         }
         var data = null;
-        console.log("thisData", obj)
         if (obj !== null) {
             data = {
                 surname: obj.surname, //姓
@@ -44,45 +43,38 @@ exports.getInfo = function(req, res, next) {
  * @return {null}        
  */
 exports.getMarkList = function(req, res, next) {
-    if (!req.query.studentNum) return res.json(resUtil.generateRes(null, config.statusCode.STATUS_INVAILD_PARAMS));
+    if (!req.query.studentNum || !req.query.studentId) return res.json(resUtil.generateRes(null, config.statusCode.STATUS_INVAILD_PARAMS));
     var stuNum = req.query.studentNum;
-    student.getInfo(stuNum, function(err, obj) {
+    var stuId = req.query.studentId;
+
+    student.lessonName(function(err, rows) {
         if (err) {
             return res.json(resUtil.generateRes(null, config.statusCode.SERVER_ERROR));
         }
+        student.getInfo(stuNum, function(err, obj) {
+            if (err) {
+                return res.json(resUtil.generateRes(null, config.statusCode.SERVER_ERROR));
+            }
+            var dataList = [];
+            if (obj != null) {
+                dataList = [{
+                    pCode: obj.p1 != null ? obj.p1 : "无",
+                    pName: pname(obj.p1, rows),
+                    pMark: obj.p1_mark != null ? obj.p1_mark : "0",
+                }, {
+                    pCode: obj.p2 != null ? obj.p2 : "无",
+                    pName: pname(obj.p2, rows),
+                    pMark: obj.p2_mark != null ? obj.p2_mark : "0",
+                }, {
+                    pCode: obj.p3 != null ? obj.p3 : "无",
+                    pName: pname(obj.p3, rows),
+                    pMark: obj.p3_mark != null ? obj.p3_mark : "0",
+                }]
+            }
+            res.json(resUtil.generateRes(dataList, config.statusCode.STATUS_OK));
 
-        if (obj === null) {
-            return res.json(resUtil.generateRes(null, config.statusCode.STATUS_OK));
-        } else {
-            student.lessonName(function(err, rows) {
-                if (err) {
-                    return res.json(resUtil.generateRes(null, config.statusCode.SERVER_ERROR));
-                }
-                console.log(rows)
-                console.log(obj)
-                var data = {
-                    accumulatedCredit: obj.accumulated_credit, //已得积分
-                    lessonList: [{
-                        pCode: obj.p1,
-                        // pName: obj.p1_name,
-                        pName: pname(obj.p1, rows),
-                        pMark: obj.p1_mark,
-                    }, {
-                        pCode: obj.p2,
-                        // pName: obj.p2_name,
-                        pName: pname(obj.p2, rows),
-                        pMark: obj.p2_mark,
-                    }, {
-                        pCode: obj.p3,
-                        // pName: obj.p3_name,
-                        pName: pname(obj.p3, rows),
-                        pMark: obj.p3_mark,
-                    }]
-                }
-                res.json(resUtil.generateRes(data, config.statusCode.STATUS_OK));
-            })
-        }
 
+        })
     })
 
 }
@@ -98,32 +90,61 @@ exports.getMarkList = function(req, res, next) {
  * @return {null}        
  */
 exports.lessonList = function(req, res, next) {
-    if (!req.query.studentNum) return res.json(resUtil.generateRes(null, config.statusCode.STATUS_INVAILD_PARAMS));
+    if (!req.query.studentNum || !req.query.studentId) return res.json(resUtil.generateRes(null, config.statusCode.STATUS_INVAILD_PARAMS));
     var stuNum = req.query.studentNum;
-    student.lessonList(stuNum, function(err, obj) {
+    var stuId = req.query.studentId;
+
+    student.lessonName(function(err, nameList) {
         if (err) {
             return res.json(resUtil.generateRes(null, config.statusCode.SERVER_ERROR));
         }
-        var data = [];
-        if (obj !== null) {
-            for (var i = 0; i < obj.length; i++) {
-                var lesObj = {};
-                lesObj.pNum = obj[i].p;
-                lesObj.pName = obj[i][obj[i].p + '_name'];
-                lesObj.pCode = obj[i][obj[i].p];
-                lesObj.absence = obj[i][obj[i].p + '_absence'];
-                lesObj.late = obj[i][obj[i].p + '_late'];
-                lesObj.startDate = dateStr(obj[i].start_date);
-                lesObj.endDate = dateStr(obj[i].end_date);
-                lesObj.startTime = obj[i].start_time;
-                lesObj.endTime = obj[i].end_time;
-                lesObj.weekly = obj[i].weekly;
-                data.push(lesObj)
+
+        student.lessonList(stuNum, function(err, obj) {
+            if (err) {
+                return res.json(resUtil.generateRes(null, config.statusCode.SERVER_ERROR));
+            }
+            console.log(obj)
+            var data = [];
+            if (obj !== null) {
+                for (var i = 0; i < obj.length; i++) {
+                    var lesObj = {};
+                    lesObj.type = 0;
+                    lesObj.pNum = obj[i].p;
+                    lesObj.pName = pname(obj[i][obj[i].p], nameList);
+                    lesObj.pCode = obj[i][obj[i].p] != null ? obj[i][obj[i].p] : "无";
+                    lesObj.startDate = dateStr(obj[i].start_date);
+                    lesObj.endDate = dateStr(obj[i].end_date);
+                    lesObj.startTime = obj[i].start_time;
+                    lesObj.endTime = obj[i].end_time;
+                    lesObj.weekly = obj[i].weekly;
+                    data.push(lesObj)
+                }
             }
 
-        }
-        res.json(resUtil.generateRes(data, config.statusCode.STATUS_OK));
+            student.languageLes(stuId, function(err, rows) {
+                if (err) {
+                    return res.json(resUtil.generateRes(null, config.statusCode.SERVER_ERROR));
+                }
+                if (rows !== null) {
+                    var lesObj = {};
+                    lesObj.type = 1;
+                    lesObj.pName = rows[0].name;
+                    lesObj.pCode = rows[0].code;
+                    lesObj.startDate = dateStr(rows[0].start_date);
+                    lesObj.endDate = dateStr(rows[0].end_date);
+                    lesObj.startTime = rows[0].start_time;
+                    lesObj.endTime = rows[0].end_time;
+                    lesObj.weekly = rows[0].weekly;
+                    data.push(lesObj)
+                }
+                console.log(data)
+                res.json(resUtil.generateRes(data, config.statusCode.STATUS_OK));
+            })
+        })
+
     })
+
+
 
 }
 
@@ -140,25 +161,20 @@ exports.lessonInfo = function(req, res, next) {
     var stuNum = req.query.studentNum;
     student.lessonInfo(stuNum, req.query.pNum, function(err, obj) {
         if (err) {
-            console.log("cuowu1")
             return res.json(resUtil.generateRes(null, config.statusCode.SERVER_ERROR));
         }
 
         if (obj === null) {
-            console.log("cuowu2")
             return res.json(resUtil.generateRes(null, config.statusCode.STATUS_OK));
-        }else{
+        } else {
             student.lessonName(function(err, rows) {
                 if (err) {
-                  console.log("cuowu3")
                     return res.json(resUtil.generateRes(null, config.statusCode.SERVER_ERROR));
                 }
-                console.log(obj.p)
                 var data = {
                     pNum: obj.p,
-                    // pName: obj[obj.p + '_name'],
-                    pName: pname(obj[obj.p],rows),           
-                    pCode: obj[obj.p],
+                    pName: pname(obj[obj.p], rows),
+                    pCode: obj[obj.p] != null ? obj[obj.p] : '无',
                     absence: obj[obj.p + '_absence'] ? obj[obj.p + '_absence'] : 0,
                     late: obj[obj.p + '_late'] ? obj[obj.p + '_late'] : 0,
                     startDate: dateStr(obj.start_date),
@@ -192,9 +208,9 @@ function dateStr(date) {
 
 //课程名
 function pname(pCode, list) {
-    if (list === null) return '';
+    if (list == null || pCode == null) return '无';
     for (var i = 0; i < list.length; i++) {
-        if (pCode.slice(0,5) === list[i].code) return list[i].name;
+        if (pCode.slice(0, 5) === list[i].code) return list[i].name;
     }
-    return '';
+    return '无';
 }
